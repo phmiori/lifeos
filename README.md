@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LifeOS — Sistema Completo de Produtividade & Gestão de Vida
 
-## Getting Started
+Uma plataforma integrada multiplataforma (Web + Mobile) para centralizar finanças, saúde, rotina e produtividade pessoal com auxílio de Inteligência Artificial.
 
-First, run the development server:
+## 🚀 Como Executar Localmente
 
+### Pré-requisitos
+- Node.js 18.18 ou superior
+- NPM ou PNPM
+
+### Instalação
+
+1. Acesse o diretório do projeto:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd lifeos
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🎨 Funcionalidades (Fase 1 - MVP Web)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+O sistema atual conta com uma UI/UX premium usando:
+- Next.js 14 App Router
+- Tailwind CSS v4
+- Framer Motion para animações fluidas
+- Zustand para estado global
+- Gráficos interativos com Recharts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Módulos Implementados
+✅ **Dashboard**: Visão geral com estatísticas, tarefas, hábitos e gráficos
+✅ **Finanças**: Gestão de saldo, contas, transações, investimentos e orçamentos
+✅ **Tarefas**: Gerenciamento de tarefas em lista, Kanban e hábitos
+✅ **Saúde & Fitness**: Acompanhamento de peso, macros de nutrição e treinos
+✅ **Calendário**: Calendário interativo para eventos do mês
+✅ **IA Assistente**: Interface de chat com assistente baseado em mock data
+✅ **Compras**: Lista de compras separadas por categoria com checkbox e barra de progresso
+✅ **Metas & Gamificação**: Metas financeiras e conquistas desbloqueáveis
+✅ **Configurações**: Gerenciamento de perfil, tema (dark/light), segurança e configurações da IA
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **Nota**: Este repositório atualmente contém a interface visual (Frontend) completa com _mock data_ para demonstração das funcionalidades. O backend em NestJS com banco de dados PostgreSQL está planejado para as próximas fases.
