@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Wallet, CheckSquare, Calendar, Bot,
   Heart, ShoppingCart, Target, Settings, ChevronLeft, Zap,
-  TrendingUp, Bell,
+  TrendingUp, Bell, Music, Film, Car
 } from 'lucide-react';
 import { useAppStore } from '@/lib/stores';
 import { cn, formatCompact } from '@/lib/utils';
@@ -15,10 +15,13 @@ const navItems = [
   { href: '/finance', label: 'Finanças', icon: Wallet },
   { href: '/tasks', label: 'Tarefas', icon: CheckSquare },
   { href: '/calendar', label: 'Calendário', icon: Calendar },
-  { href: '/ai', label: 'IA Assistente', icon: Bot },
   { href: '/health', label: 'Saúde', icon: Heart },
+  { href: '/music', label: 'Música', icon: Music },
+  { href: '/movies', label: 'Filmes', icon: Film },
+  { href: '/garage', label: 'Garagem', icon: Car },
   { href: '/shopping', label: 'Compras', icon: ShoppingCart },
   { href: '/goals', label: 'Metas', icon: Target },
+  { href: '/ai', label: 'IA Assistente', icon: Bot },
 ];
 
 export function Sidebar() {

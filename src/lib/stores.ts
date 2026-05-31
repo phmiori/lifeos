@@ -147,3 +147,71 @@ export const useAppStore = create<AppStore>()(
     { name: 'lifeos-app' }
   )
 );
+
+// ─── PLAYER STORE ────────────────────────────────────────────────────────────
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  album?: string;
+  cover_url?: string;
+  duration_secs: number;
+}
+
+interface PlayerStore {
+  currentSong: Song | null;
+  queue: Song[];
+  queueIndex: number;
+  isPlaying: boolean;
+  progress: number;
+  volume: number;
+  playSong: (song: Song, queue?: Song[]) => void;
+  setPlaying: (v: boolean) => void;
+  setProgress: (v: number) => void;
+  setVolume: (v: number) => void;
+  playNext: () => void;
+  playPrev: () => void;
+}
+
+export const usePlayerStore = create<PlayerStore>()((set, get) => ({
+  currentSong: null,
+  queue: [],
+  queueIndex: 0,
+  isPlaying: false,
+  progress: 0,
+  volume: 0.8,
+
+  playSong: (song, queue = []) => {
+    const idx = queue.findIndex(s => s.id === song.id)
+    set({
+      currentSong: song,
+      queue: queue.length > 0 ? queue : [song],
+      queueIndex: idx >= 0 ? idx : 0,
+      isPlaying: true,
+      progress: 0,
+    })
+  },
+
+  setPlaying: (v) => set({ isPlaying: v }),
+  setProgress: (v) => set({ progress: v }),
+  setVolume: (v) => set({ volume: v }),
+
+  playNext: () => {
+    const { queue, queueIndex, playSong } = get()
+    const next = queueIndex + 1
+    if (next < queue.length) {
+      set({ queueIndex: next })
+      playSong(queue[next], queue)
+    }
+  },
+
+  playPrev: () => {
+    const { queue, queueIndex, playSong, progress } = get()
+    if (progress > 5) { set({ progress: 0 }); return }
+    const prev = queueIndex - 1
+    if (prev >= 0) {
+      set({ queueIndex: prev })
+      playSong(queue[prev], queue)
+    }
+  },
+}));
