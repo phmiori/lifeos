@@ -1,5 +1,4 @@
 'use client';
-import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 import { useEffect, useState } from 'react';
 
@@ -15,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <>
       {children}
       <Toaster
         theme="dark"
@@ -29,6 +28,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           },
         }}
       />
-    </ThemeProvider>
+    </>
   );
 }
