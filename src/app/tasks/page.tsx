@@ -6,6 +6,8 @@ import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
 import { useTasksStore } from '@/lib/stores';
 import { toast } from 'sonner';
+import { TaskModal } from '@/components/tasks/task-modal';
+import { HabitModal } from '@/components/tasks/habit-modal';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -28,6 +30,8 @@ export default function TasksPage() {
   const { tasks, habits, projects, updateTask, toggleHabit } = useTasksStore();
   const [view, setView] = useState<'list' | 'kanban' | 'habits'>('list');
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [isTaskModalOpen, setTaskModalOpen] = useState(false);
+  const [isHabitModalOpen, setHabitModalOpen] = useState(false);
 
   const filteredTasks = filterStatus === 'ALL'
     ? tasks
@@ -41,12 +45,14 @@ export default function TasksPage() {
 
   return (
     <AppLayout>
+      <TaskModal isOpen={isTaskModalOpen} onClose={() => setTaskModalOpen(false)} />
+      <HabitModal isOpen={isHabitModalOpen} onClose={() => setHabitModalOpen(false)} />
       <TopBar
         title="Tarefas"
         subtitle="Gerencie sua produtividade"
         actions={
           <button className="btn btn-primary text-sm" style={{ padding: '8px 14px' }}
-            onClick={() => toast.info('Modal de criação disponível na versão completa!')}>
+            onClick={() => setTaskModalOpen(true)}>
             <Plus size={15} /> Nova Tarefa
           </button>
         }
@@ -180,7 +186,7 @@ export default function TasksPage() {
                       <span className="font-semibold text-sm text-white">{col.label}</span>
                       <span className="badge badge-muted">{colTasks.length}</span>
                     </div>
-                    <button className="btn-icon" style={{ padding: '4px' }}>
+                    <button className="btn-icon" style={{ padding: '4px' }} onClick={() => setTaskModalOpen(true)}>
                       <Plus size={14} />
                     </button>
                   </div>
@@ -308,7 +314,7 @@ export default function TasksPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: habits.length * 0.05 }}
                 className="card p-5 flex flex-col items-center justify-center gap-3 cursor-pointer border-dashed opacity-60 hover:opacity-100"
-                onClick={() => toast.info('Criação de hábitos disponível na versão completa!')}
+                onClick={() => setHabitModalOpen(true)}
               >
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
                   style={{ background: 'var(--bg-glass)', border: '2px dashed var(--border)' }}>
