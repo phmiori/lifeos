@@ -5,7 +5,6 @@ import { Plus, CheckSquare, Kanban, Flame, GripVertical, ChevronDown, Tag } from
 import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
 import { useTasksStore } from '@/lib/stores';
-import { mockProjects } from '@/lib/mock-data';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -26,7 +25,7 @@ const STATUS_CONFIG = {
 };
 
 export default function TasksPage() {
-  const { tasks, habits, updateTask, toggleHabit } = useTasksStore();
+  const { tasks, habits, projects, updateTask, toggleHabit } = useTasksStore();
   const [view, setView] = useState<'list' | 'kanban' | 'habits'>('list');
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
 
@@ -104,7 +103,7 @@ export default function TasksPage() {
           <div className="space-y-2">
             {filteredTasks.map((task, i) => {
               const pCfg = PRIORITY_CONFIG[task.priority as keyof typeof PRIORITY_CONFIG];
-              const project = mockProjects.find(p => p.id === task.projectId);
+              const project = projects.find(p => p.id === task.projectId);
               return (
                 <motion.div
                   key={task.id}

@@ -14,9 +14,8 @@ import {
 import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
 import { StatCard } from '@/components/ui/card';
-import { useFinanceStore, useTasksStore, useAppStore, useHealthStore } from '@/lib/stores';
+import { useFinanceStore, useTasksStore, useAppStore, useHealthStore, useAuthStore } from '@/lib/stores';
 import { formatCurrency, formatCompact, formatPercent } from '@/lib/utils';
-import { mockMonthlyData, mockInsights } from '@/lib/mock-data';
 import Link from 'next/link';
 
 const INSIGHT_COLORS = {
@@ -51,9 +50,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function DashboardPage() {
-  const { accounts, transactions, goals } = useFinanceStore();
+  const { accounts, transactions, goals, monthlyData } = useFinanceStore();
   const { tasks, habits } = useTasksStore();
-  const { user, insights } = useAppStore();
+  const { user: authUser } = useAuthStore();
+  const { insights } = useAppStore();
   const { nutrition } = useHealthStore();
 
   const totalBalance = accounts.reduce((s, a) => s + a.balance, 0);
@@ -64,12 +64,13 @@ export default function DashboardPage() {
 
   const today = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
 
-  const investmentAlloc = [
-    { name: 'Ações', value: 45, color: '#6366F1' },
-    { name: 'FIIs', value: 20, color: '#10B981' },
-    { name: 'Cripto', value: 15, color: '#F59E0B' },
-    { name: 'Renda Fixa', value: 20, color: '#3B82F6' },
-  ];
+  const totalInvestments = accounts.filter(a => a.type === 'INVESTMENT').reduce((s, a) => s + a.balance, 0);
+
+  const investmentAlloc = accounts.filter(a => a.type === 'INVESTMENT').length > 0 ? accounts
+    .filter(a => a.type === 'INVESTMENT')
+    .map(a => ({ name: a.name, value: a.balance, color: a.color })) : [
+      { name: 'Sem Investimentos', value: 100, color: 'var(--bg-tertiary)' }
+    ];
 
   return (
     <AppLayout>
@@ -88,7 +89,7 @@ export default function DashboardPage() {
         >
           <div>
             <h2 className="text-2xl font-bold text-white">
-              Bom dia, {user.name.split(' ')[0]}! 👋
+              Bom dia, {authUser?.username?.split(' ')[0] || 'Visitante'}! 👋
             </h2>
             <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
               {pendingTasks} tarefas pendentes · {completedHabits}/{habits.length} hábitos concluídos hoje
@@ -104,7 +105,7 @@ export default function DashboardPage() {
             style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}
           >
             <Flame size={18} className="text-yellow-400" />
-            <span className="font-bold text-yellow-400">{user.streak}</span>
+            <span className="font-bold text-yellow-400">0</span>
             <span className="text-xs" style={{ color: 'var(--text-muted)' }}>dias</span>
           </motion.div>
         </motion.div>
@@ -139,7 +140,7 @@ export default function DashboardPage() {
           />
           <StatCard
             title="Investimentos"
-            value="R$ 42,8K"
+            value={formatCompact(totalInvestments)}
             change="6.3% este mês"
             changePositive
             icon={<TrendingUp size={18} />}
@@ -169,7 +170,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={mockMonthlyData}>
+              <AreaChart data={monthlyData}>
                 <defs>
                   <linearGradient id="colorReceitas" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />

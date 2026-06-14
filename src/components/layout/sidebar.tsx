@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Wallet, CheckSquare, Calendar, Bot,
   Heart, ShoppingCart, Target, Settings, ChevronLeft, Zap,
-  TrendingUp, Bell, Music, Film, Car
+  TrendingUp, Bell, Music, Film, Car, LogOut
 } from 'lucide-react';
-import { useAppStore } from '@/lib/stores';
+import { useAppStore, useAuthStore } from '@/lib/stores';
 import { cn, formatCompact } from '@/lib/utils';
 
 const navItems = [
@@ -26,7 +26,17 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarCollapsed, toggleSidebar, user } = useAppStore();
+  const router = useRouter();
+  const { sidebarCollapsed, toggleSidebar } = useAppStore();
+  const { user: authUser, logout } = useAuthStore();
+
+  const displayName = authUser?.username ?? 'Usuário';
+  const displayInitials = displayName.slice(0, 2).toUpperCase();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   const totalBalance = 65570.50;
 
@@ -76,31 +86,23 @@ export function Sidebar() {
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
                 style={{ background: 'var(--gradient-main)' }}>
-                {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                {displayInitials}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{user.name.split(' ')[0]}</p>
+                <p className="text-sm font-semibold text-white truncate">{displayName}</p>
                 <p className="text-xs flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
                   <Zap size={10} className="text-yellow-400" />
-                  Nível {user.level}
+                  {authUser?.role === 'admin' ? 'Admin' : 'Usuário'}
                 </p>
               </div>
-              <button className="btn-icon ml-auto flex-shrink-0" style={{ padding: '6px' }}>
-                <Bell size={14} />
+              <button
+                onClick={handleLogout}
+                className="btn-icon ml-auto flex-shrink-0"
+                style={{ padding: '6px' }}
+                title="Sair"
+              >
+                <LogOut size={14} />
               </button>
-            </div>
-
-            {/* XP Bar */}
-            <div className="mt-2">
-              <div className="progress-bar" style={{ height: '4px' }}>
-                <div
-                  className="progress-fill"
-                  style={{ width: `${(user.xp / user.xpToNextLevel) * 100}%` }}
-                />
-              </div>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-                {user.xp} / {user.xpToNextLevel} XP
-              </p>
             </div>
           </motion.div>
         )}

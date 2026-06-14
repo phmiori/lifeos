@@ -9,7 +9,6 @@ import {
 import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
 import { useHealthStore } from '@/lib/stores';
-import { mockNutrition } from '@/lib/mock-data';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -33,8 +32,8 @@ export default function HealthPage() {
     peso: Number(m.weight.toFixed(1)),
   }));
 
-  const calsNet = mockNutrition.calories.consumed - mockNutrition.calories.burned;
-  const calsBalance = mockNutrition.calories.target - calsNet;
+  const calsNet = nutrition.calories.consumed - nutrition.calories.burned;
+  const calsBalance = nutrition.calories.target - calsNet;
 
   return (
     <AppLayout>
@@ -47,8 +46,8 @@ export default function HealthPage() {
           {[
             { label: 'Peso Atual', value: '82.0 kg', change: '-0.5kg semana', up: false, positive: true, icon: TrendingDown, color: '#10B981' },
             { label: 'Treinos no Mês', value: '12', change: '80% da meta', up: true, positive: true, icon: Dumbbell, color: '#6366F1' },
-            { label: 'Calorias Hoje', value: `${mockNutrition.calories.consumed}`, change: `/${mockNutrition.calories.target} kcal`, up: true, positive: true, icon: Flame, color: '#F59E0B' },
-            { label: 'Proteína', value: `${mockNutrition.protein.consumed}g`, change: `/${mockNutrition.protein.target}g meta`, up: true, positive: true, icon: Activity, color: '#EF4444' },
+            { label: 'Calorias Hoje', value: `${nutrition.calories.consumed}`, change: `/${nutrition.calories.target} kcal`, up: true, positive: true, icon: Flame, color: '#F59E0B' },
+            { label: 'Proteína', value: `${nutrition.protein.consumed}g`, change: `/${nutrition.protein.target}g meta`, up: true, positive: true, icon: Activity, color: '#EF4444' },
           ].map((s, i) => (
             <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="stat-card">
               <div className="flex items-center justify-between mb-3">
@@ -195,10 +194,10 @@ export default function HealthPage() {
 
               <div className="grid grid-cols-4 gap-4 mb-5">
                 {[
-                  { label: 'Calorias', val: mockNutrition.calories.consumed, target: mockNutrition.calories.target, unit: 'kcal', color: '#F59E0B' },
-                  { label: 'Proteína', val: mockNutrition.protein.consumed, target: mockNutrition.protein.target, unit: 'g', color: '#EF4444' },
-                  { label: 'Carboidratos', val: mockNutrition.carbs.consumed, target: mockNutrition.carbs.target, unit: 'g', color: '#6366F1' },
-                  { label: 'Gordura', val: mockNutrition.fat.consumed, target: mockNutrition.fat.target, unit: 'g', color: '#10B981' },
+                  { label: 'Calorias', val: nutrition.calories.consumed, target: nutrition.calories.target, unit: 'kcal', color: '#F59E0B' },
+                  { label: 'Proteína', val: nutrition.protein.consumed, target: nutrition.protein.target, unit: 'g', color: '#EF4444' },
+                  { label: 'Carboidratos', val: nutrition.carbs.consumed, target: nutrition.carbs.target, unit: 'g', color: '#6366F1' },
+                  { label: 'Gordura', val: nutrition.fat.consumed, target: nutrition.fat.target, unit: 'g', color: '#10B981' },
                 ].map(m => (
                   <div key={m.label} className="text-center">
                     <div className="relative w-16 h-16 mx-auto mb-2">
@@ -225,7 +224,7 @@ export default function HealthPage() {
             {/* Meals */}
             <div className="space-y-3">
               <h3 className="font-semibold text-white">Refeições do Dia</h3>
-              {mockNutrition.meals.map((meal, i) => (
+              {nutrition.meals.map((meal, i) => (
                 <motion.div key={meal.name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.07 }} className="card p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"

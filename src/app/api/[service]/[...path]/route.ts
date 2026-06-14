@@ -1,4 +1,3 @@
-import { auth } from '@/app/api/auth/[...nextauth]/route'
 import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080'
@@ -8,21 +7,10 @@ async function proxyRequest(
   service: string,
   path: string[]
 ) {
-  const session = await auth()
-
   const targetUrl = `${BACKEND_URL}/api/${service}/${path.join('/')}`
   const headers: Record<string, string> = {
     'Content-Type': request.headers.get('content-type') || 'application/json',
-  }
-
-  if (session?.user) {
-    const token = Buffer.from(JSON.stringify({
-      user_id: session.user.dbId,
-      email:   session.user.email,
-      role:    session.user.role,
-    })).toString('base64')
-    headers['X-Internal-Token'] = token
-    headers['X-Internal-Secret'] = process.env.INTERNAL_SECRET || 'lifeos-internal-secret-dev'
+    'X-Internal-Secret': process.env.INTERNAL_SECRET || 'lifeos-internal-secret-dev',
   }
 
   const body = request.method !== 'GET' && request.method !== 'HEAD'
@@ -35,47 +23,55 @@ async function proxyRequest(
       headers,
       body,
     })
-    
+
     // Para stream (vídeo, áudio), repassar direto a resposta do fetch sem processar como JSON
     if (path.includes('stream')) {
-       return new NextResponse(response.body, {
-           status: response.status,
-           headers: response.headers
-       })
+      return new NextResponse(response.body, {
+        status: response.status,
+        headers: response.headers,
+      })
     }
 
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
     console.error('API Proxy Error:', error)
-    return NextResponse.json({ success: false, error: { message: 'Erro no proxy interno' } }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: { message: 'Erro no proxy interno' } },
+      { status: 500 }
+    )
   }
 }
 
+// Next.js 16: params is a Promise — must be awaited
 export async function GET(
   req: NextRequest,
-  { params }: { params: { service: string; path: string[] } }
+  { params }: { params: Promise<{ service: string; path: string[] }> }
 ) {
-  return proxyRequest(req, params.service, params.path)
+  const { service, path } = await params
+  return proxyRequest(req, service, path)
 }
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { service: string; path: string[] } }
+  { params }: { params: Promise<{ service: string; path: string[] }> }
 ) {
-  return proxyRequest(req, params.service, params.path)
+  const { service, path } = await params
+  return proxyRequest(req, service, path)
 }
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { service: string; path: string[] } }
+  { params }: { params: Promise<{ service: string; path: string[] }> }
 ) {
-  return proxyRequest(req, params.service, params.path)
+  const { service, path } = await params
+  return proxyRequest(req, service, path)
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { service: string; path: string[] } }
+  { params }: { params: Promise<{ service: string; path: string[] }> }
 ) {
-  return proxyRequest(req, params.service, params.path)
+  const { service, path } = await params
+  return proxyRequest(req, service, path)
 }

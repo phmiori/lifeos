@@ -14,9 +14,10 @@ import {
 } from 'recharts';
 import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
+import { AccountModal } from '@/components/finance/account-modal';
+import { TransactionModal } from '@/components/finance/transaction-modal';
 import { useFinanceStore } from '@/lib/stores';
 import { formatCurrency, formatCompact, formatPercent } from '@/lib/utils';
-import { mockMonthlyData, mockCategories } from '@/lib/mock-data';
 import { toast } from 'sonner';
 
 const ACCOUNT_TYPE_LABELS: Record<string, { label: string; icon: string }> = {
@@ -37,9 +38,11 @@ const categorySpend = [
 ];
 
 export default function FinancePage() {
-  const { accounts, transactions, investments } = useFinanceStore();
+  const { accounts, transactions, investments, categories, monthlyData } = useFinanceStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'investments' | 'budget'>('overview');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAccountModalOpen, setAccountModalOpen] = useState(false);
+  const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
   const totalBalance = accounts.reduce((s, a) => s + a.balance, 0);
   const totalIncome = transactions.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0);
@@ -59,6 +62,9 @@ export default function FinancePage() {
 
   return (
     <AppLayout>
+      <AccountModal isOpen={isAccountModalOpen} onClose={() => setAccountModalOpen(false)} />
+      <TransactionModal isOpen={isTransactionModalOpen} onClose={() => setTransactionModalOpen(false)} />
+      
       <TopBar title="Finanças" subtitle="Controle financeiro completo" />
 
       <div className="p-6 space-y-6">
@@ -118,7 +124,7 @@ export default function FinancePage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-white">Minhas Contas</h3>
                 <button
-                  onClick={() => toast.success('Funcionalidade disponível na versão completa!')}
+                  onClick={() => setAccountModalOpen(true)}
                   className="btn btn-secondary text-xs"
                   style={{ padding: '6px 12px' }}
                 >
@@ -177,7 +183,7 @@ export default function FinancePage() {
             <div className="card p-5">
               <h3 className="font-semibold text-white mb-4">Fluxo de Caixa Mensal</h3>
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={mockMonthlyData}>
+                <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="month" tick={{ fill: '#475569', fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#475569', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} />
@@ -209,7 +215,7 @@ export default function FinancePage() {
               <button className="btn btn-secondary">
                 <Filter size={15} /> Filtrar
               </button>
-              <button className="btn btn-primary">
+              <button className="btn btn-primary" onClick={() => setTransactionModalOpen(true)}>
                 <Plus size={15} /> Nova
               </button>
             </div>
@@ -238,7 +244,7 @@ export default function FinancePage() {
                       <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         {format(tx.date, "d MMM yyyy", { locale: ptBR })}
                         {' · '}
-                        {mockCategories.find(c => c.id === tx.categoryId)?.name || 'Sem categoria'}
+                        {categories.find(c => c.id === tx.categoryId)?.name || 'Sem categoria'}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">

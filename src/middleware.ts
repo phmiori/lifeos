@@ -1,7 +1,7 @@
-export { auth as middleware } from '@/app/api/auth/[...nextauth]/route'
+// Auth is handled client-side via useAuthStore (Zustand + persist).
+// This middleware is intentionally left as a passthrough.
+export function middleware() {}
 
 export const config = {
-  matcher: [
-    '/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: [],
 }

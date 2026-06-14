@@ -1,29 +1,25 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useAuthStore } from '@/lib/stores';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AppLayout } from '@/components/layout/app-layout';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { isAuthenticated } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!isAuthenticated) {
       router.push('/login');
     }
-  }, [status, router]);
+  }, [isAuthenticated, router]);
 
-  if (status === 'loading') {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
-        <div className="text-white">Carregando...</div>
+        <div style={{ color: 'var(--text-muted)' }}>Redirecionando...</div>
       </div>
     );
-  }
-
-  if (!session) {
-    return null;
   }
 
   return (
