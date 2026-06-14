@@ -229,6 +229,9 @@ interface HealthStore {
   workouts: Workout[];
   bodyMetrics: BodyMetric[];
   nutrition: Nutrition;
+  addWorkout: (w: Workout) => void;
+  addBodyMetric: (m: BodyMetric) => void;
+  addMeal: (m: { name: string; calories: number; time: string; foods: string[]; protein: number; carbs: number; fat: number }) => void;
 }
 export const useHealthStore = create<HealthStore>()(
   persist(
@@ -242,6 +245,21 @@ export const useHealthStore = create<HealthStore>()(
         fat: { target: 60, consumed: 0 },
         meals: [],
       } as Nutrition,
+      addWorkout: (w) => set((s) => ({ workouts: [w, ...s.workouts] })),
+      addBodyMetric: (m) => set((s) => ({ bodyMetrics: [...s.bodyMetrics, m] })),
+      addMeal: (m) => set((s) => {
+        const n = s.nutrition;
+        return {
+          nutrition: {
+            ...n,
+            calories: { ...n.calories, consumed: n.calories.consumed + m.calories },
+            protein: { ...n.protein, consumed: n.protein.consumed + m.protein },
+            carbs: { ...n.carbs, consumed: n.carbs.consumed + m.carbs },
+            fat: { ...n.fat, consumed: n.fat.consumed + m.fat },
+            meals: [...n.meals, { name: m.name, calories: m.calories, time: m.time, foods: m.foods }]
+          }
+        };
+      }),
     }),
     { name: 'lifeos-health' }
   )

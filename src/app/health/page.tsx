@@ -12,6 +12,9 @@ import { useHealthStore } from '@/lib/stores';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { MetricsModal } from '@/components/health/metrics-modal';
+import { WorkoutModal } from '@/components/health/workout-modal';
+import { MealModal } from '@/components/health/meal-modal';
 
 const weeklyWorkouts = [
   { day: 'Seg', done: true, name: 'Peito' },
@@ -26,6 +29,9 @@ const weeklyWorkouts = [
 export default function HealthPage() {
   const { bodyMetrics, workouts, nutrition } = useHealthStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'fitness' | 'nutrition'>('overview');
+  const [isMetricsModalOpen, setMetricsModalOpen] = useState(false);
+  const [isWorkoutModalOpen, setWorkoutModalOpen] = useState(false);
+  const [isMealModalOpen, setMealModalOpen] = useState(false);
 
   const weightData = bodyMetrics.slice(-14).map(m => ({
     date: m.date,
@@ -37,6 +43,9 @@ export default function HealthPage() {
 
   return (
     <AppLayout>
+      <MetricsModal isOpen={isMetricsModalOpen} onClose={() => setMetricsModalOpen(false)} />
+      <WorkoutModal isOpen={isWorkoutModalOpen} onClose={() => setWorkoutModalOpen(false)} />
+      <MealModal isOpen={isMealModalOpen} onClose={() => setMealModalOpen(false)} />
       <TopBar title="Saúde & Fitness" subtitle="Acompanhe seu progresso físico" />
 
       <div className="p-6 space-y-6">
@@ -134,7 +143,7 @@ export default function HealthPage() {
                     ))}
                   </div>
                   <button className="btn btn-secondary w-full mt-3 text-xs" style={{ padding: '8px' }}
-                    onClick={() => toast.info('Registro de medidas disponível na versão completa!')}>
+                    onClick={() => setMetricsModalOpen(true)}>
                     <Plus size={13} /> Registrar Medidas
                   </button>
                 </div>
@@ -147,7 +156,8 @@ export default function HealthPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-semibold text-white">Histórico de Treinos</h3>
-              <button className="btn btn-primary text-xs" style={{ padding: '8px 14px' }}>
+              <button className="btn btn-primary text-xs" style={{ padding: '8px 14px' }}
+                onClick={() => setWorkoutModalOpen(true)}>
                 <Plus size={14} /> Registrar Treino
               </button>
             </div>
@@ -244,7 +254,7 @@ export default function HealthPage() {
                 </motion.div>
               ))}
               <button className="btn btn-secondary w-full"
-                onClick={() => toast.info('Registro de refeições disponível na versão completa!')}>
+                onClick={() => setMealModalOpen(true)}>
                 <Plus size={15} /> Adicionar Refeição
               </button>
             </div>

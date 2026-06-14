@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Plus, Clock, MapPin } from 'lucide-react';
 import { AppLayout } from '@/components/layout/app-layout';
 import { TopBar } from '@/components/layout/topbar';
 import { useCalendarStore } from '@/lib/stores';
+import { EventModal } from '@/components/calendar/event-modal';
 import { cn } from '@/lib/utils';
 
 const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -16,6 +17,7 @@ export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -39,11 +41,12 @@ export default function CalendarPage() {
 
   return (
     <AppLayout>
+      <EventModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} />
       <TopBar
         title="Calendário"
         subtitle={format(currentMonth, "MMMM 'de' yyyy", { locale: ptBR })}
         actions={
-          <button className="btn btn-primary text-sm" style={{ padding: '8px 14px' }}>
+          <button className="btn btn-primary text-sm" style={{ padding: '8px 14px' }} onClick={() => setIsModalOpen(true)}>
             <Plus size={15} /> Novo Evento
           </button>
         }
@@ -165,7 +168,7 @@ export default function CalendarPage() {
             <div className="text-center py-8">
               <p className="text-3xl mb-2">📅</p>
               <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Nenhum evento neste dia</p>
-              <button className="btn btn-primary mt-4 text-xs" style={{ padding: '8px 14px' }}>
+              <button className="btn btn-primary mt-4 text-xs" style={{ padding: '8px 14px' }} onClick={() => setIsModalOpen(true)}>
                 <Plus size={13} /> Adicionar
               </button>
             </div>
